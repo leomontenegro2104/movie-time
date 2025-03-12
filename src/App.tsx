@@ -1,15 +1,20 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter } from "react-router-dom"
+import Header from "./components/molecules/header/Header"
+import AppRoutes from "./routers/Routes"
+import Footer from "./components/molecules/footer/Footer"
 
 function App() {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <h1 className="text-4xl font-bold text-blue-600">Tailwind Funcionando! 🎉</h1>
-    </div>
-  );
+    <BrowserRouter>
+      <div className="flex flex-col min-h-screen">
+        <Header />
+        <main className="flex-grow">
+          <AppRoutes />
+        </main>
+        <Footer />
+      </div>
+    </BrowserRouter>
+  )
 }
 
-export default App;
-
+export default App
