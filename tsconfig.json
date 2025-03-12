@@ -3,5 +3,16 @@
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
-  ]
+  ],
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "@routers/*": ["./src/routers/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@components/*": ["./src/components/*"],
+      "@src": ["./src"],
+      "@src/*": ["./src/*"],
+    }
+  },
+  "exclude": ["node_modules", "dist"]
 }
