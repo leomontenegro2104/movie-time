@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
-import { Modal, ModalContent } from "../../atoms/Modal";
+import Modal from "../../atoms/Modal/Modal";
+import ModalContent from "../../atoms/Modal/ModalContent";
 
 interface TrailerModalProps {
   item: { id: number };
