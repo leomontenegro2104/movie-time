@@ -48,7 +48,7 @@ interface TmdbContextType {
 
   getMoviesList: (type: MovieType, params?: RequestParams) => Promise<void>;
   getTvList: (type: TVType, params?: RequestParams) => Promise<void>;
-  getVideos: (cate: Category, id: string | number) => Promise<void>;
+  getVideos: (cate: Category, id: string | number) => Promise<{ key: string }[]>;
   search: (cate: Category, params?: RequestParams) => Promise<void>;
   detail: (cate: Category, id: string | number, params?: RequestParams) => Promise<void>;
   getCredits: (cate: Category, id: string | number) => Promise<void>;
@@ -91,10 +91,12 @@ export const TmdbProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setTvShows(data);
   }, [fetchData]);
 
-  const getVideos = useCallback(async (cate: Category, id: string | number) => {
+  const getVideos = useCallback(async (cate: Category, id: string | number): Promise<{ key: string }[]> => {
     const data = await fetchData<{ key: string }>(`${cate}/${id}/videos`);
     setVideos(data);
+    return data;
   }, [fetchData]);
+
 
   const search = useCallback(async (cate: Category, params?: RequestParams) => {
     const data = await fetchData<Movie>(`search/${cate}`, params);
