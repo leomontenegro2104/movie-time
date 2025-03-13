@@ -1,25 +1,32 @@
-import React from "react";
-import "./button.scss";
+import React from 'react';
+import './button.scss';
 
 interface ButtonProps {
-  onClick?: () => void;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   className?: string;
-  children: React.ReactNode;
-  variant?: "default" | "outline";
-  size?: "small" | "large";
+  children?: React.ReactNode;
 }
 
-const Button: React.FC<ButtonProps> = ({ onClick, children, className = "", variant = "default", size = "large" }) => {
+const Button: React.FC<ButtonProps> = (props) => {
   return (
     <button
-      className={`btn ${variant === "outline" ? "btn-outline" : ""} ${size === "small" ? "btn-small" : ""} ${className}`}
-      onClick={onClick}
+      className={`btn ${props.className || ''}`}
+      onClick={props.onClick ? (e) => props.onClick && props.onClick(e) : undefined}
     >
-      {children}
+      {props.children}
     </button>
   );
 };
 
-export const OutlineButton: React.FC<ButtonProps> = (props) => <Button {...props} variant="outline" />;
+export const OutlineButton: React.FC<ButtonProps> = (props) => {
+  return (
+    <Button
+      className={`btn-outline ${props.className || ''}`}
+      onClick={props.onClick ? (e) => props.onClick && props.onClick(e) : undefined}
+    >
+      {props.children}
+    </Button>
+  );
+};
 
 export default Button;

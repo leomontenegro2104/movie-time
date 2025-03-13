@@ -26,17 +26,19 @@ button {
   border: 3px solid $white;
   background-color: transparent;
   color: $white;
+  box-shadow: unset;
   transition:
     color 0.3s ease,
     background-color 0.3s ease;
 }
 
 .btn-outline:hover {
+  box-shadow: unset;
   color: $main-color;
   background-color: $white;
 }
 
-.btn-small {
+.btn.small {
   border-width: 2px;
   padding: 0.25rem 1.5rem;
   font-size: 1rem;
