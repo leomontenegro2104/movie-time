@@ -2,7 +2,7 @@ import { BrowserRouter } from "react-router-dom"
 import AppRoutes from "./routers/Routes"
 import { TmdbProvider } from "./context/TmdbContext"
 import Footer from "./components/molecules/Footer"
-import Header from "./components/molecules/Header"
+import Header from "./components/molecules/Header/Header"
 
 function App() {
   return (
