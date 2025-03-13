@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react"
 import { useLocation } from "react-router-dom"
-import Logo from "../atoms/Logo"
+import Logo from "../atoms/Logo/Logo"
 import Navbar from "../atoms/Navbar"
 
 const headerNav = [

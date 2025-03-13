@@ -1,0 +1,23 @@
+@use '../../../scss/' as *;
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  &__image {
+    width: 3rem; // Equivalente a w-12 do Tailwind
+  }
+
+  &__text {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: $white;
+    text-decoration: none;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: $main-color;
+    }
+  }
+}
