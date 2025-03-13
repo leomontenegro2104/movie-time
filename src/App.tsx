@@ -1,7 +1,7 @@
 import { BrowserRouter } from "react-router-dom"
-import Header from "./components/molecules/header/Header"
 import AppRoutes from "./routers/Routes"
-import Footer from "./components/molecules/footer/Footer"
+import Footer from "./components/molecules/Footer"
+import Header from "./components/molecules/Header"
 
 function App() {
   return (
