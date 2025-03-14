@@ -21,42 +21,50 @@ export interface IMovie {
 
 interface MovieGridProps {
   category: Category;
+  type?: string; // ex.: "similar" para listagem de filmes similares
+  id?: number;   // usado quando type === "similar"
 }
 
-const MovieGrid: React.FC<MovieGridProps> = ({ category }) => {
+const MovieGrid: React.FC<MovieGridProps> = ({ category, type, id }) => {
   const { keyword } = useParams<{ keyword?: string }>();
   const {
     movies,
     tvShows,
     searchResults,
+    similarMovies,
     moviesTotalPages,
     tvShowsTotalPages,
     searchTotalPages,
     getMoviesList,
     getTvList,
     search,
+    getSimilarMovies,
   } = useTmdb();
 
-  // Seleciona os itens conforme o modo (pesquisa ou listagem normal)
-  const items: IMovie[] = !keyword
-    ? category === Category.MOVIE
-      ? movies
-      : tvShows
-    : searchResults;
+  // Se type === "similar", usamos o estado similarMovies; caso contrário, usamos os dados normais
+  const items: IMovie[] =
+    type === "similar" ? similarMovies : !keyword
+      ? category === Category.MOVIE
+        ? movies
+        : tvShows
+      : searchResults;
 
-  const totalPage: number = !keyword
-    ? category === Category.MOVIE
-      ? moviesTotalPages
-      : tvShowsTotalPages
-    : searchTotalPages;
+  const totalPage: number =
+    type === "similar" ? 1 : !keyword
+      ? category === Category.MOVIE
+        ? moviesTotalPages
+        : tvShowsTotalPages
+      : searchTotalPages;
 
   // Estado local para controlar a página atual (para o botão "Load more")
   const [page, setPage] = useState<number>(1);
 
-  // Quando category ou keyword mudam, reinicia a busca (sem append)
+  // Quando category, keyword ou type mudam, reinicia a busca (sem append)
   useEffect(() => {
     setPage(1);
-    if (!keyword) {
+    if (type === "similar" && id) {
+      getSimilarMovies(category, id);
+    } else if (!keyword) {
       const params = { page: 1 };
       if (category === Category.MOVIE) {
         getMoviesList(MovieType.UPCOMING, params, false);
@@ -67,10 +75,11 @@ const MovieGrid: React.FC<MovieGridProps> = ({ category }) => {
       const params = { page: 1, query: keyword };
       search(category, params, false);
     }
-  }, [category, keyword, getMoviesList, getTvList, search]);
+  }, [category, keyword, type, id, getMoviesList, getTvList, search, getSimilarMovies]);
 
-  // Carrega mais resultados delegando ao contexto (com append)
+  // Carrega mais resultados (não aplicável para "similar")
   const loadMore = useCallback(() => {
+    if (type === "similar") return; // não há paginação para "similar"
     if (page < totalPage) {
       const nextPage = page + 1;
       if (!keyword) {
@@ -86,7 +95,7 @@ const MovieGrid: React.FC<MovieGridProps> = ({ category }) => {
       }
       setPage(nextPage);
     }
-  }, [page, totalPage, category, keyword, getMoviesList, getTvList, search]);
+  }, [page, totalPage, type, keyword, category, getMoviesList, getTvList, search]);
 
   return (
     <>
@@ -98,7 +107,7 @@ const MovieGrid: React.FC<MovieGridProps> = ({ category }) => {
           <MovieCard key={i} item={item} category={category} />
         ))}
       </div>
-      {page < totalPage && (
+      {type !== "similar" && page < totalPage && (
         <div className="movie-grid__loadmore">
           <OutlineButton className="small" onClick={loadMore}>
             Load more
