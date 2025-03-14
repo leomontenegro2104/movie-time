@@ -7,7 +7,7 @@ import Modal, { ModalContent } from '../../atoms/Modal/Modal';
 
 import { useTmdb } from '../../../hooks/useTmdb';
 import { Category, MovieType } from '../../../context/TmdbContext';
-import './hero-slider.scss';
+import './hero-slide.scss';
 
 interface IMovie {
   id: number;
