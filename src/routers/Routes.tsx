@@ -2,7 +2,7 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Home from '../pages/Home';
 import Catalog from '../pages/Catalog';
-import Detail from '../pages/Detail';
+import Detail from '../pages/Detail/Detail';
 import LogIn from '../pages/LogIn';
 import SignUp from '../pages/SignUp';
 import NotFound from '../pages/NotFound';
