@@ -1,15 +1,29 @@
-import React from 'react'
+import React from 'react';
+import { useParams } from 'react-router-dom';
+import { Category } from '../context/TmdbContext';
+import PageHeader from '../components/molecules/PageHeader/PageHeader';
+import MovieGrid from '../components/molecules/MovieGrid/MovieGrid';
 
-export interface CatalogProps {
-
+interface CatalogParams {
+  category: string;
+  [key: string]: string | undefined;
 }
 
-const Catalog: React.FC<CatalogProps> = () => {
+const Catalog: React.FC = () => {
+  const { category } = useParams<CatalogParams>();
+
   return (
-    <div>
-      Catalog
-    </div>
-  )
-}
+    <>
+      <PageHeader>
+        {category === Category.MOVIE ? 'Movies' : 'TV Series'}
+      </PageHeader>
+      <div className="container">
+        <div className="section mb-3">
+          <MovieGrid category={category as Category} />
+        </div>
+      </div>
+    </>
+  );
+};
 
-export default Catalog
+export default Catalog;
