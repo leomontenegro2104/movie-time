@@ -74,7 +74,6 @@ export const TmdbProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [credits, setCredits] = useState<{ name: string; job: string }[]>([]);
   const [similarMovies, setSimilarMovies] = useState<Movie[]>([]);
 
-  // Agora fetchData retorna o objeto completo da resposta.
   const fetchData = useCallback(async <T,>(url: string, params?: RequestParams): Promise<TmdbResponse<T>> => {
     try {
       const response = await axiosClient.get<TmdbResponse<T>>(url, { params });
