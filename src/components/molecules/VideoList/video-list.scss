@@ -1,0 +1,17 @@
+@use '../../../scss/' as *;
+
+.video {
+  margin-bottom: 3rem;
+
+  &__title {
+    margin-bottom: 1.5rem;
+
+    h2 {
+      font-size: 1.8rem;
+    }
+  }
+
+  iframe {
+    border: 0;
+  }
+}
