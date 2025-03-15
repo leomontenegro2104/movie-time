@@ -9,7 +9,7 @@ interface ButtonProps {
 const Button: React.FC<ButtonProps> = (props) => {
   return (
     <button
-      className={`cursor-pointer font-[Montserrat] border-4 border-transparent bg-[#ff0000] text-white rounded-[30px] py-[0.5rem] px-[1.8rem] text-[1.5rem] font-semibold shadow-[0_0_7px_8px_#ff00004d] transition-shadow duration-300 ease-out relative hover:shadow-[0_0_7px_15px_#ff00004d] ${props.className || ''}`}
+      className={`cursor-pointer font-[Montserrat] border-4 border-transparent bg-[#ff0000] text-white rounded-[30px] py-[0.3rem] px-[1rem] text-[0.8rem] font-semibold shadow-[0_0_7px_8px_#ff00004d] transition-shadow duration-300 ease-out relative hover:shadow-[0_0_7px_15px_#ff00004d] ${props.className || ''}`}
       onClick={props.onClick ? (e) => props.onClick!(e) : undefined}
     >
       {props.children}
