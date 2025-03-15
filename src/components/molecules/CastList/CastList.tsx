@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTmdb } from '../../../hooks/useTmdb';
 import apiConfig from '../../../api/apiConfig';
-import './cast-list.scss';
 import { Category } from '../../../context/TmdbContext';
 
 interface Cast {
@@ -32,14 +31,14 @@ const CastList: React.FC<CastListProps> = ({ id }) => {
   const castList: Cast[] = (credits as Cast[])?.slice(0, 5) || [];
 
   return (
-    <div className="casts">
+    <div className="grid grid-cols-auto-fill-90 gap-2">
       {castList.map((item, i) => (
-        <div key={i} className="casts__item">
+        <div key={i} className="flex flex-col items-center">
           <div
-            className="casts__item__img"
+            className="w-full h-[160px] bg-cover bg-no-repeat rounded-lg"
             style={{ backgroundImage: `url(${apiConfig.w500Image(item.profile_path || '')})` }}
           ></div>
-          <p className="casts__item__name">{item.name}</p>
+          <p className="text-xs text-center mt-1">{item.name}</p>
         </div>
       ))}
     </div>
