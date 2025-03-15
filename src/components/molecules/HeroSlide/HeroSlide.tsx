@@ -1,13 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 import apiConfig from '../../../api/apiConfig';
 import Button, { OutlineButton } from '../../atoms/Button/Button';
 import Modal, { ModalContent } from '../../atoms/Modal/Modal';
-
 import { useTmdb } from '../../../hooks/useTmdb';
 import { Category, MovieType } from '../../../context/TmdbContext';
-import './hero-slide.scss';
 
 interface IMovie {
   id: number;
@@ -34,7 +31,7 @@ const HeroSlide: React.FC = () => {
     getMoviesList(MovieType.POPULAR, { page: 1 });
   }, [getMoviesList]);
 
-  const movieItems = movies.slice(1, 4);
+  const movieItems = movies.slice(1, 10);
 
   useEffect(() => {
     if (movieItems.length > 0) {
@@ -54,17 +51,23 @@ const HeroSlide: React.FC = () => {
   };
 
   return (
-    <div className="hero-slide">
+    <div className="relative mb-12">
       {movieItems.length > 0 && (
         <HeroSlideItem item={movieItems[activeSlide]} className="active" />
       )}
 
-      <div className="hero-slide__nav">
-        <button className="hero-slide__nav-btn prev" onClick={prevSlide}>
-          {"<"}
+      <div className="absolute top-1/2 w-full flex justify-between transform -translate-y-1/2 z-10">
+        <button
+          className="bg-black/50 text-white p-4 text-2xl transition hover:bg-black/80"
+          onClick={prevSlide}
+        >
+          &#8249;
         </button>
-        <button className="hero-slide__nav-btn next" onClick={nextSlide}>
-          {">"}
+        <button
+          className="bg-black/50 text-white p-4 text-2xl transition hover:bg-black/80"
+          onClick={nextSlide}
+        >
+          &#8250;
         </button>
       </div>
 
@@ -77,9 +80,7 @@ const HeroSlide: React.FC = () => {
 
 const HeroSlideItem: React.FC<HeroSlideItemProps> = ({ item, className }) => {
   const navigate = useNavigate();
-  const background = apiConfig.originalImage(
-    item.backdrop_path ? item.backdrop_path : item.poster_path
-  );
+  const background = apiConfig.originalImage(item.backdrop_path || item.poster_path);
   const { getVideos } = useTmdb();
 
   const setModalActive = async () => {
@@ -87,16 +88,14 @@ const HeroSlideItem: React.FC<HeroSlideItemProps> = ({ item, className }) => {
     if (modal) {
       try {
         const videosData = await getVideos(Category.MOVIE, item.id);
-        if (videosData && videosData.length > 0) {
-          const videoSrc = 'https://www.youtube.com/embed/' + videosData[0].key;
-          const iframe = modal.querySelector('.modal__content > iframe') as HTMLIFrameElement | null;
-          if (iframe) {
-            iframe.setAttribute('src', videoSrc);
-          }
+        if (videosData.length > 0) {
+          const videoSrc = `https://www.youtube.com/embed/${videosData[0].key}`;
+          const iframe = modal.querySelector('iframe') as HTMLIFrameElement | null;
+          iframe?.setAttribute('src', videoSrc);
         } else {
           const modalContent = modal.querySelector('.modal__content') as HTMLElement | null;
           if (modalContent) {
-            modalContent.innerHTML = 'No trailer';
+            modalContent.innerHTML = 'No trailer available';
           }
         }
         modal.classList.toggle('active');
@@ -108,25 +107,27 @@ const HeroSlideItem: React.FC<HeroSlideItemProps> = ({ item, className }) => {
 
   return (
     <div
-      className={`hero-slide__item ${className || ''}`}
+      className={`relative w-full h-[70vh] bg-cover bg-center flex items-center justify-center ${className || ''}`}
       style={{ backgroundImage: `url(${background})` }}
     >
-      <div className="hero-slide__item__content container">
-        <div className="hero-slide__item__content__info">
-          <h2 className="title">{item.title}</h2>
-          <div className="overview">{item.overview}</div>
-          <div className="btns">
-            <Button onClick={() => navigate('/movie/' + item.id)}>
-              Watch now
-            </Button>
-            <OutlineButton onClick={setModalActive}>
-              Watch trailer
-            </OutlineButton>
+      <div className="absolute inset-0 bg-black/60"></div>
+      <div className='flex items-center justify-center'>
+        <div className="relative text-white px-6">
+          <h2 className="text-5xl font-bold mb-4">{item.title}</h2>
+          <p className="max-w-xl mx-auto mb-6">{item.overview}</p>
+          <div className="flex space-x-4">
+            <Button onClick={() => navigate('/movie/' + item.id)}>Watch now</Button>
+            <OutlineButton onClick={setModalActive}>Watch trailer</OutlineButton>
           </div>
         </div>
-        <div className="hero-slide__item__content__poster">
-          <img src={apiConfig.w500Image(item.poster_path || '')} alt={item.title} />
+        <div className="flex flex-1 items-center justify-start relative">
+          <img
+            src={apiConfig.w500Image(item.poster_path || '')}
+            alt={item.title}
+            className="w-[15rem] h-[20rem] rounded-[30px]"
+          />
         </div>
+
       </div>
     </div>
   );
