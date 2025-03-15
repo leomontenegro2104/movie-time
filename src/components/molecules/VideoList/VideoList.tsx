@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTmdb } from '../../../hooks/useTmdb';
-import './video-list.scss';
 import { Category } from '../../../context/TmdbContext';
 
 interface VideoItem {
@@ -44,7 +43,7 @@ interface VideoProps {
 }
 
 const Video: React.FC<VideoProps> = ({ item }) => {
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   useEffect(() => {
     if (iframeRef.current) {
@@ -54,15 +53,16 @@ const Video: React.FC<VideoProps> = ({ item }) => {
   }, []);
 
   return (
-    <div className="video">
-      <div className="video__title">
-        <h2>{item.name ? item.name : 'Trailer'}</h2>
+    <div className="mb-12">
+      <div className="mb-6">
+        <h2 className="text-[1.8rem]">{item.name ? item.name : 'Trailer'}</h2>
       </div>
       <iframe
         src={`https://www.youtube.com/embed/${item.key}`}
         ref={iframeRef}
         width="100%"
         title="video"
+        className="border-0"
       ></iframe>
     </div>
   );
