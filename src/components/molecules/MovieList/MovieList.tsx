@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from 'react';
 import { useTmdb } from '../../../hooks/useTmdb';
 import { Category, MovieType, TVType } from '../../../context/TmdbContext';
 import MovieCard from '../MovieCard/MovieCard';
-import './movie-list.scss';
 
 export interface IMovie {
   id: number;
@@ -15,8 +14,8 @@ export interface IMovie {
 
 interface MovieListProps {
   category: Category;
-  type: string; // pode ser um valor dos enums MovieType ou TVType ou a string 'similar'
-  id?: number;  // usado quando type === 'similar'
+  type: string;
+  id?: number;
 }
 
 const MovieList: React.FC<MovieListProps> = ({ category, type, id }) => {
@@ -70,18 +69,24 @@ const MovieList: React.FC<MovieListProps> = ({ category, type, id }) => {
   };
 
   return (
-    <div className="movie-list">
-      <button className="movie-list__arrow left" onClick={scrollLeft}>
+    <div className="relative py-4">
+      <button
+        className="absolute top-1/2 -translate-y-1/2 left-0 bg-black/50 text-white text-2xl w-10 h-10 rounded-full cursor-pointer z-10"
+        onClick={scrollLeft}
+      >
         &#8249;
       </button>
-      <div className="movie-list__container" ref={containerRef}>
+      <div ref={containerRef} className="flex overflow-x-auto scroll-smooth gap-4 py-4">
         {items.map((item, i) => (
-          <div className="movie-list__item" key={i}>
+          <div key={i} className="flex-none w-[40%] sm:w-[40%] md:w-[30%] lg:w-[15%]">
             <MovieCard item={item} category={category} />
           </div>
         ))}
       </div>
-      <button className="movie-list__arrow right" onClick={scrollRight}>
+      <button
+        className="absolute top-1/2 -translate-y-1/2 right-0 bg-black/50 text-white text-2xl w-10 h-10 rounded-full cursor-pointer z-10"
+        onClick={scrollRight}
+      >
         &#8250;
       </button>
     </div>
