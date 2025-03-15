@@ -1,21 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-
+import { useParams } from 'react-router-dom';
 import { useTmdb } from '../../../hooks/useTmdb';
 import { Category, MovieType, TVType } from '../../../context/TmdbContext';
-
 import MovieCard from '../MovieCard/MovieCard';
-import Button, { OutlineButton } from '../../atoms/Button/Button';
-import Input from '../../atoms/Input/Input';
-
-export interface IMovie {
-  id: number;
-  backdrop_path?: string;
-  poster_path?: string;
-  title?: string;
-  name?: string;
-  overview?: string;
-}
+import { OutlineButton } from '../../atoms/Button/Button';
+import MovieSearch from './MovieSearch';
 
 interface MovieGridProps {
   category: Category;
@@ -25,75 +14,39 @@ interface MovieGridProps {
 
 const MovieGrid: React.FC<MovieGridProps> = ({ category, type, id }) => {
   const { keyword } = useParams<{ keyword?: string }>();
-  const {
-    movies,
-    tvShows,
-    searchResults,
-    similarMovies,
-    moviesTotalPages,
-    tvShowsTotalPages,
-    searchTotalPages,
-    getMoviesList,
-    getTvList,
-    search,
-    getSimilarMovies,
-  } = useTmdb();
-
-  const items: IMovie[] =
-    type === 'similar'
-      ? similarMovies
-      : !keyword
-        ? category === Category.MOVIE
-          ? movies
-          : tvShows
-        : searchResults;
-
-  const totalPage: number =
-    type === 'similar'
-      ? 1
-      : !keyword
-        ? category === Category.MOVIE
-          ? moviesTotalPages
-          : tvShowsTotalPages
-        : searchTotalPages;
+  const { moviesByCategory, getMoviesList, getTvList, search, getSimilarMovies } = useTmdb();
 
   const [page, setPage] = useState<number>(1);
 
   useEffect(() => {
     setPage(1);
+
     if (type === 'similar' && id) {
       getSimilarMovies(category, id);
     } else if (!keyword) {
-      const params = { page: 1 };
       if (category === Category.MOVIE) {
-        getMoviesList(MovieType.UPCOMING, params, false);
+        getMoviesList(MovieType.UPCOMING, { page: 1 });
       } else {
-        getTvList(TVType.POPULAR, params, false);
+        getTvList(TVType.POPULAR, { page: 1 });
       }
     } else {
-      const params = { page: 1, query: keyword };
-      search(category, params, false);
+      search(category, { page: 1, query: keyword });
     }
   }, [category, keyword, type, id, getMoviesList, getTvList, search, getSimilarMovies]);
 
+  const items = moviesByCategory?.[category] ?? [];
+
   const loadMore = useCallback(() => {
     if (type === 'similar') return;
-    if (page < totalPage) {
-      const nextPage = page + 1;
-      if (!keyword) {
-        const params = { page: nextPage };
-        if (category === Category.MOVIE) {
-          getMoviesList(MovieType.UPCOMING, params, true);
-        } else {
-          getTvList(TVType.POPULAR, params, true);
-        }
-      } else {
-        const params = { page: nextPage, query: keyword };
-        search(category, params, true);
-      }
-      setPage(nextPage);
+
+    setPage((prev) => prev + 1);
+
+    if (category === Category.MOVIE) {
+      getMoviesList(MovieType.UPCOMING, { page: page + 1 }, true);
+    } else {
+      getTvList(TVType.POPULAR, { page: page + 1 }, true);
     }
-  }, [page, totalPage, type, keyword, category, getMoviesList, getTvList, search]);
+  }, [category, page, type, getMoviesList, getTvList]);
 
   return (
     <>
@@ -101,61 +54,18 @@ const MovieGrid: React.FC<MovieGridProps> = ({ category, type, id }) => {
         <MovieSearch category={category} keyword={keyword || ''} />
       </div>
       <div className="grid grid-cols-auto-fill-200 gap-5 mb-12">
-        {items.map((item, i) => (
-          <MovieCard key={i} item={item} category={category} />
-        ))}
+        {Array.isArray(items) && items.length > 0 ? (
+          items.map((item) => <MovieCard key={item.id} item={item} category={category} />)
+        ) : (
+          <p className="text-center text-white">No results found.</p>
+        )}
       </div>
-      {type !== 'similar' && page < totalPage && (
+      {type !== 'similar' && (
         <div className="text-center">
-          <OutlineButton className="text-lg px-6 py-2" onClick={loadMore}>
-            Load more
-          </OutlineButton>
+          <OutlineButton onClick={loadMore}>Load more</OutlineButton>
         </div>
       )}
     </>
-  );
-};
-
-interface MovieSearchProps {
-  category: Category;
-  keyword: string;
-}
-
-const MovieSearch: React.FC<MovieSearchProps> = ({ category, keyword: initKeyword }) => {
-  const navigate = useNavigate();
-  const [keyword, setKeyword] = useState<string>(initKeyword);
-
-  const goToSearch = useCallback(() => {
-    if (keyword.trim().length > 0) {
-      navigate(`/${category}/search/${keyword}`);
-    }
-  }, [keyword, category, navigate]);
-
-  useEffect(() => {
-    const enterEvent = (e: KeyboardEvent) => {
-      if (e.key === 'Enter') {
-        goToSearch();
-      }
-    };
-    document.addEventListener('keyup', enterEvent);
-    return () => {
-      document.removeEventListener('keyup', enterEvent);
-    };
-  }, [goToSearch]);
-
-  return (
-    <div className="relative w-full max-w-lg mx-auto">
-      <Input
-        type="text"
-        placeholder="Enter keyword"
-        value={keyword}
-        onChange={(e) => setKeyword(e.target.value)}
-        className="w-full pr-24 py-2 text-lg"
-      />
-      <Button className="absolute right-2 top-2 text-lg px-4 py-2" onClick={goToSearch}>
-        Search
-      </Button>
-    </div>
   );
 };
 
