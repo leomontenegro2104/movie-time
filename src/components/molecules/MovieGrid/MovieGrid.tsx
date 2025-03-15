@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTmdb } from '../../../hooks/useTmdb';
-import { Category, MovieType, TVType } from '../../../context/TmdbContext';
 import MovieCard from '../MovieCard/MovieCard';
 import { OutlineButton } from '../../atoms/Button/Button';
 import MovieSearch from './MovieSearch';
+import { Category, MovieType, TVType } from '../../../api/tmdbApi';
 
 interface MovieGridProps {
   category: Category;

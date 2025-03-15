@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useTmdb } from '../../../hooks/useTmdb';
-import { Category, MovieType, TVType, Movie } from '../../../context/TmdbContext';
 import MovieCard from '../MovieCard/MovieCard';
+import { Category, MovieType, TVType } from '../../../api/tmdbApi';
+import { Movie } from '../../../context/TmdbContext';
 
 interface MovieListProps {
   category: Category;
@@ -9,18 +10,9 @@ interface MovieListProps {
 }
 
 const MovieList: React.FC<MovieListProps> = ({ category, type }) => {
-  const { moviesByCategory, getMoviesList, getTvList } = useTmdb();
+  const { movieList } = useTmdb();
 
-  useEffect(() => {
-    if (category === Category.MOVIE) {
-      getMoviesList(type as MovieType, { page: 1 });
-    } else {
-      getTvList(type as TVType, { page: 1 });
-    }
-  }, [category, type, getMoviesList, getTvList]);
-
-  const items: Movie[] =
-    moviesByCategory[category]?.[type] ?? [];
+  const items: Movie[] = movieList[category]?.[type] ?? [];
 
   return (
     <div className="relative py-4 overflow-hidden">

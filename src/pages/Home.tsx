@@ -1,8 +1,8 @@
 import React from 'react';
 import HeroSlide from '../components/molecules/HeroSlide/HeroSlide';
-import { Category, MovieType, TVType } from '../context/TmdbContext';
 import MovieList from '../components/molecules/MovieList/MovieList';
 import MovieSection from '../components/molecules/MovieSection/MovieSection';
+import { Category, MovieType, TVType } from '../api/tmdbApi';
 
 interface MovieSectionData {
   title: string;

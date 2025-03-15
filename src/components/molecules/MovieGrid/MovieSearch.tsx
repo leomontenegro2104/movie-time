@@ -1,8 +1,8 @@
 import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Category } from '../../../context/TmdbContext';
 import Button from '../../atoms/Button/Button';
 import Input from '../../atoms/Input/Input';
+import { Category } from '../../../api/tmdbApi';
 
 interface MovieSearchProps {
   category: Category;

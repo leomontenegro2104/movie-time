@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import apiConfig from '../api/apiConfig';
-import { Category, Movie } from '../context/TmdbContext';
+import { Movie } from '../context/TmdbContext';
 import CastList from '../components/molecules/CastList/CastList';
 import VideoList from '../components/molecules/VideoList/VideoList';
 import MovieGrid from '../components/molecules/MovieGrid/MovieGrid';
 import { useTmdb } from '../hooks/useTmdb';
+import { Category } from '../api/tmdbApi';
 
 interface MovieWithGenres extends Movie {
   genres?: { id: number; name: string }[];

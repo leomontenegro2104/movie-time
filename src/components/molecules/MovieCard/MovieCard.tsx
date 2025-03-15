@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { Category } from '../../../context/TmdbContext';
 import apiConfig from '../../../api/apiConfig';
 import Button from '../../atoms/Button/Button';
+import { Category } from '../../../api/tmdbApi';
 
 interface IMovie {
   id: number;

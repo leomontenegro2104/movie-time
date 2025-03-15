@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTmdb } from '../../../hooks/useTmdb';
 import apiConfig from '../../../api/apiConfig';
-import { Category } from '../../../context/TmdbContext';
+import { Category } from '../../../api/tmdbApi';
 
 interface Cast {
   profile_path?: string;

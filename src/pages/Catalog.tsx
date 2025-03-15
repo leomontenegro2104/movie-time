@@ -1,8 +1,8 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { Category } from '../context/TmdbContext';
 import PageHeader from '../components/molecules/PageHeader/PageHeader';
 import MovieGrid from '../components/molecules/MovieGrid/MovieGrid';
+import { Category } from '../api/tmdbApi';
 
 interface CatalogParams {
   category: string;

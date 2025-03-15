@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import apiConfig from '../../../api/apiConfig';
 import Button, { OutlineButton } from '../../atoms/Button/Button';
 import { useTmdb } from '../../../hooks/useTmdb';
-import { Category, MovieType } from '../../../context/TmdbContext';
+import { Category, MovieType } from '../../../api/tmdbApi';
 
 interface IMovie {
   id: number;
@@ -19,14 +19,10 @@ interface HeroSlideItemProps {
 }
 
 const HeroSlide: React.FC = () => {
-  const { moviesByCategory, getMoviesList } = useTmdb();
+  const { movieList } = useTmdb();
   const [activeSlide, setActiveSlide] = useState<number>(0);
 
-  useEffect(() => {
-    getMoviesList(MovieType.POPULAR, { page: 1 });
-  }, [getMoviesList]);
-
-  const movieItems = moviesByCategory[Category.MOVIE]?.[MovieType.POPULAR]?.slice(0, 3) || [];
+  const movieItems = movieList[Category.MOVIE]?.[MovieType.POPULAR]?.slice(0, 3) || [];
 
   useEffect(() => {
     if (movieItems.length > 0) {

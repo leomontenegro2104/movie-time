@@ -1,32 +1,31 @@
-import { createContext, useState, useCallback, useMemo } from "react";
-import axiosClient from "../api/axiosClient";
+import React, { useState, useEffect } from 'react';
+import { createContext } from 'use-context-selector';
+import axiosClient from '../api/axiosClient';
 
 export enum Category {
-  MOVIE = "movie",
-  TV = "tv",
+  MOVIE = 'movie',
+  TV = 'tv',
 }
 
 export enum MovieType {
-  UPCOMING = "upcoming",
-  POPULAR = "popular",
-  TOP_RATED = "top_rated",
+  UPCOMING = 'upcoming',
+  POPULAR = 'popular',
+  TOP_RATED = 'top_rated',
 }
 
 export enum TVType {
-  POPULAR = "popular",
-  TOP_RATED = "top_rated",
-  ON_THE_AIR = "on_the_air",
+  POPULAR = 'popular',
+  TOP_RATED = 'top_rated',
+  ON_THE_AIR = 'on_the_air',
 }
 
 export interface RequestParams {
   [key: string]: string | number | boolean | undefined;
 }
 
-export interface TmdbResponse<T> {
-  page: number;
+export interface ApiResponse<T> {
   results: T[];
   total_pages: number;
-  total_results: number;
 }
 
 export interface Movie {
@@ -37,143 +36,82 @@ export interface Movie {
   poster_path: string;
 }
 
-export type MovieResponse = TmdbResponse<Movie>;
-
-interface TmdbContextType {
-  moviesByCategory: Record<Category, Record<string, Movie[]>>;
-  moviesTotalPages: Record<Category, Record<string, number>>;
-  movieDetail: Movie | null;
-  credits: { name: string; job: string }[];
-  videos: { key: string }[];
-  searchResults: Movie[];
-  searchTotalPages: number;
-  getMoviesList: (type: MovieType, params?: RequestParams, append?: boolean) => Promise<void>;
-  getTvList: (type: TVType, params?: RequestParams, append?: boolean) => Promise<void>;
-  search: (category: Category, params?: RequestParams, append?: boolean) => Promise<void>;
-  detail: (category: Category, id: string | number, params?: RequestParams) => Promise<void>;
-  getCredits: (category: Category, id: string | number) => Promise<void>;
-  getVideos: (category: Category, id: string | number) => Promise<{ key: string }[]>;
-  getSimilarMovies: (category: Category, id: string | number) => Promise<void>;
+export interface MovieTypeGroup {
+  upcoming: Movie[];
+  popular: Movie[];
+  top_rated: Movie[];
 }
 
-export const TmdbContext = createContext<TmdbContextType | undefined>(undefined);
+export interface TVTypeGroup {
+  popular: Movie[];
+  top_rated: Movie[];
+  on_the_air: Movie[];
+}
+
+export interface MovieList {
+  movie: MovieTypeGroup;
+  tv: TVTypeGroup;
+}
+
+export interface TmdbContextType {
+  movieList: MovieList;
+  refreshMovieList: () => Promise<void>;
+}
+
+export const TmdbContext = createContext<TmdbContextType>({} as TmdbContextType);
 
 export const TmdbProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [moviesByCategory, setMoviesByCategory] = useState<Record<Category, Record<string, Movie[]>>>({
-    [Category.MOVIE]: {},
-    [Category.TV]: {},
+  const [movieList, setMovieList] = useState<MovieList>({
+    movie: { upcoming: [], popular: [], top_rated: [] },
+    tv: { popular: [], top_rated: [], on_the_air: [] },
   });
 
-  const [moviesTotalPages, setMoviesTotalPages] = useState<Record<Category, Record<string, number>>>({
-    [Category.MOVIE]: {},
-    [Category.TV]: {},
-  });
-
-  const [movieDetail, setMovieDetail] = useState<Movie | null>(null);
-  const [credits, setCredits] = useState<{ name: string; job: string }[]>([]);
-  const [videos, setVideos] = useState<{ key: string }[]>([]);
-  const [searchResults, setSearchResults] = useState<Movie[]>([]);
-  const [searchTotalPages, setSearchTotalPages] = useState<number>(0);
-
-  const fetchData = useCallback(async <T,>(url: string, params?: RequestParams): Promise<TmdbResponse<T>> => {
+  async function refreshMovieList() {
     try {
-      const response = await axiosClient.get<TmdbResponse<T>>(url, { params });
-      if (!response || !response.data.results) {
-        throw new Error("Invalid API response: Missing 'results' field.");
-      }
-      return response.data;
+      const movieTypes: MovieType[] = [MovieType.UPCOMING, MovieType.POPULAR, MovieType.TOP_RATED];
+      const tvTypes: TVType[] = [TVType.POPULAR, TVType.TOP_RATED, TVType.ON_THE_AIR];
+
+      const moviePromises = movieTypes.map((type) =>
+        axiosClient.get<ApiResponse<Movie>>(`movie/${type}`, { params: { page: 1 } })
+      );
+      const tvPromises = tvTypes.map((type) =>
+        axiosClient.get<ApiResponse<Movie>>(`tv/${type}`, { params: { page: 1 } })
+      );
+
+      console.log('moviePromises:', moviePromises);
+
+      const movieResults = await Promise.all(moviePromises);
+      const tvResults = await Promise.all(tvPromises);
+
+      console.log('movieResults:', movieResults);
+
+      const newMovieList: MovieList = {
+        movie: {
+          upcoming: movieResults[0].results,
+          popular: movieResults[1].results,
+          top_rated: movieResults[2].results,
+        },
+        tv: {
+          popular: tvResults[0].results,
+          top_rated: tvResults[1].results,
+          on_the_air: tvResults[2].results,
+        },
+      };
+      console.log('newMovieList:', newMovieList);
+
+      setMovieList(newMovieList);
     } catch (error) {
-      console.error("TMDB API Error:", error);
-      return { page: 0, results: [], total_pages: 0, total_results: 0 };
+      console.error('Error fetching movie list:', error);
     }
+  }
+
+  useEffect(() => {
+    refreshMovieList();
   }, []);
 
-  const getMoviesList = useCallback(async (type: MovieType, params?: RequestParams, append: boolean = false) => {
-    const data = await fetchData<Movie>(`movie/${type}`, params);
-    setMoviesByCategory((prev) => ({
-      ...prev,
-      [Category.MOVIE]: {
-        ...prev[Category.MOVIE],
-        [type]: append ? [...(prev[Category.MOVIE][type] || []), ...data.results] : data.results,
-      },
-    }));
-    setMoviesTotalPages((prev) => ({
-      ...prev,
-      [Category.MOVIE]: { ...prev[Category.MOVIE], [type]: data.total_pages },
-    }));
-  }, [fetchData]);
-
-  const getTvList = useCallback(async (type: TVType, params?: RequestParams, append: boolean = false) => {
-    const data = await fetchData<Movie>(`tv/${type}`, params);
-    setMoviesByCategory((prev) => ({
-      ...prev,
-      [Category.TV]: {
-        ...prev[Category.TV],
-        [type]: append ? [...(prev[Category.TV][type] || []), ...data.results] : data.results,
-      },
-    }));
-    setMoviesTotalPages((prev) => ({
-      ...prev,
-      [Category.TV]: { ...prev[Category.TV], [type]: data.total_pages },
-    }));
-  }, [fetchData]);
-
-  const search = useCallback(async (category: Category, params?: RequestParams, append: boolean = false) => {
-    const data = await fetchData<Movie>(`search/${category}`, params);
-    setSearchResults((prev) => (append ? [...prev, ...data.results] : data.results));
-    setSearchTotalPages(data.total_pages);
-  }, [fetchData]);
-
-  const detail = useCallback(async (category: Category, id: string | number, params?: RequestParams) => {
-    try {
-      const response = await axiosClient.get<Movie>(`${category}/${id}`, { params });
-      setMovieDetail(response.data);
-    } catch (error) {
-      console.error("TMDB API Detail Error:", error);
-    }
-  }, []);
-
-  const getCredits = useCallback(async (category: Category, id: string | number) => {
-    const data = await fetchData<{ name: string; job: string }>(`${category}/${id}/credits`);
-    setCredits(data.results);
-  }, [fetchData]);
-
-  const getVideos = useCallback(async (category: Category, id: string | number): Promise<{ key: string }[]> => {
-    const data = await fetchData<{ key: string }>(`${category}/${id}/videos`);
-    setVideos(data.results);
-    return data.results;
-  }, [fetchData]);
-
-  const getSimilarMovies = useCallback(async (category: Category, id: string | number) => {
-    const data = await fetchData<Movie>(`${category}/${id}/similar`);
-    setMoviesByCategory((prev) => ({
-      ...prev,
-      [category]: {
-        ...prev[category],
-        similar: data.results,
-      },
-    }));
-  }, [fetchData]);
-
-  const contextValue = useMemo(
-    () => ({
-      moviesByCategory,
-      moviesTotalPages,
-      movieDetail,
-      credits,
-      videos,
-      searchResults,
-      searchTotalPages,
-      getMoviesList,
-      getTvList,
-      search,
-      detail,
-      getCredits,
-      getVideos,
-      getSimilarMovies,
-    }),
-    [moviesByCategory, moviesTotalPages, movieDetail, credits, videos, searchResults, searchTotalPages, getMoviesList, getTvList, search, detail, getCredits, getVideos, getSimilarMovies]
+  return (
+    <TmdbContext.Provider value={{ movieList, refreshMovieList }}>
+      {children}
+    </TmdbContext.Provider>
   );
-
-  return <TmdbContext.Provider value={contextValue}>{children}</TmdbContext.Provider>;
 };
