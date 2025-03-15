@@ -8,8 +8,6 @@ import MovieCard from '../MovieCard/MovieCard';
 import Button, { OutlineButton } from '../../atoms/Button/Button';
 import Input from '../../atoms/Input/Input';
 
-import './movie-grid.scss';
-
 export interface IMovie {
   id: number;
   backdrop_path?: string;
@@ -21,8 +19,8 @@ export interface IMovie {
 
 interface MovieGridProps {
   category: Category;
-  type?: string; // ex.: "similar" para listagem de filmes similares
-  id?: number;   // usado quando type === "similar"
+  type?: string;
+  id?: number;
 }
 
 const MovieGrid: React.FC<MovieGridProps> = ({ category, type, id }) => {
@@ -41,28 +39,29 @@ const MovieGrid: React.FC<MovieGridProps> = ({ category, type, id }) => {
     getSimilarMovies,
   } = useTmdb();
 
-  // Se type === "similar", usamos o estado similarMovies; caso contrário, usamos os dados normais
   const items: IMovie[] =
-    type === "similar" ? similarMovies : !keyword
-      ? category === Category.MOVIE
-        ? movies
-        : tvShows
-      : searchResults;
+    type === 'similar'
+      ? similarMovies
+      : !keyword
+        ? category === Category.MOVIE
+          ? movies
+          : tvShows
+        : searchResults;
 
   const totalPage: number =
-    type === "similar" ? 1 : !keyword
-      ? category === Category.MOVIE
-        ? moviesTotalPages
-        : tvShowsTotalPages
-      : searchTotalPages;
+    type === 'similar'
+      ? 1
+      : !keyword
+        ? category === Category.MOVIE
+          ? moviesTotalPages
+          : tvShowsTotalPages
+        : searchTotalPages;
 
-  // Estado local para controlar a página atual (para o botão "Load more")
   const [page, setPage] = useState<number>(1);
 
-  // Quando category, keyword ou type mudam, reinicia a busca (sem append)
   useEffect(() => {
     setPage(1);
-    if (type === "similar" && id) {
+    if (type === 'similar' && id) {
       getSimilarMovies(category, id);
     } else if (!keyword) {
       const params = { page: 1 };
@@ -77,9 +76,8 @@ const MovieGrid: React.FC<MovieGridProps> = ({ category, type, id }) => {
     }
   }, [category, keyword, type, id, getMoviesList, getTvList, search, getSimilarMovies]);
 
-  // Carrega mais resultados (não aplicável para "similar")
   const loadMore = useCallback(() => {
-    if (type === "similar") return; // não há paginação para "similar"
+    if (type === 'similar') return;
     if (page < totalPage) {
       const nextPage = page + 1;
       if (!keyword) {
@@ -99,17 +97,17 @@ const MovieGrid: React.FC<MovieGridProps> = ({ category, type, id }) => {
 
   return (
     <>
-      <div className="section mb-3">
+      <div className="mb-12">
         <MovieSearch category={category} keyword={keyword || ''} />
       </div>
-      <div className="movie-grid">
+      <div className="grid grid-cols-auto-fill-200 gap-5 mb-12">
         {items.map((item, i) => (
           <MovieCard key={i} item={item} category={category} />
         ))}
       </div>
-      {type !== "similar" && page < totalPage && (
-        <div className="movie-grid__loadmore">
-          <OutlineButton className="small" onClick={loadMore}>
+      {type !== 'similar' && page < totalPage && (
+        <div className="text-center">
+          <OutlineButton className="text-lg px-6 py-2" onClick={loadMore}>
             Load more
           </OutlineButton>
         </div>
@@ -146,14 +144,15 @@ const MovieSearch: React.FC<MovieSearchProps> = ({ category, keyword: initKeywor
   }, [goToSearch]);
 
   return (
-    <div className="movie-search">
+    <div className="relative w-full max-w-lg mx-auto">
       <Input
         type="text"
         placeholder="Enter keyword"
         value={keyword}
         onChange={(e) => setKeyword(e.target.value)}
+        className="w-full pr-24 py-2 text-lg"
       />
-      <Button className="small" onClick={goToSearch}>
+      <Button className="absolute right-2 top-2 text-lg px-4 py-2" onClick={goToSearch}>
         Search
       </Button>
     </div>
