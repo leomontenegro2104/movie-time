@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/tmovie.png';
 import Input from '../components/atoms/Input/Input';
 import Button from '../components/atoms/Button/Button';
@@ -9,9 +9,11 @@ const SignUp: React.FC = () => {
   const [name, setName] = useState('');
   const [cpf, setCpf] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    navigate('/login');
   };
 
   return (
@@ -57,7 +59,7 @@ const SignUp: React.FC = () => {
             className="w-full"
           />
         </div>
-        <Button className="w-full">
+        <Button type="submit" className="w-full">
           Sign Up
         </Button>
       </form>

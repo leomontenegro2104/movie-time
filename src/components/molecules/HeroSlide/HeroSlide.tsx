@@ -31,7 +31,7 @@ const HeroSlide: React.FC = () => {
     getMoviesList(MovieType.POPULAR, { page: 1 });
   }, [getMoviesList]);
 
-  const movieItems = movies.slice(1, 10);
+  const movieItems = movies.slice(16, 20);
 
   useEffect(() => {
     if (movieItems.length > 0) {
@@ -107,7 +107,7 @@ const HeroSlideItem: React.FC<HeroSlideItemProps> = ({ item, className }) => {
 
   return (
     <div
-      className={`relative w-full h-[70vh] bg-cover bg-center flex items-center justify-center ${className || ''}`}
+      className={`relative w-full h-[85vh] bg-cover bg-center flex items-center justify-center ${className || ''}`}
       style={{ backgroundImage: `url(${background})` }}
     >
       <div className="absolute inset-0 bg-black/60"></div>

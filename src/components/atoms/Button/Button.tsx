@@ -1,8 +1,6 @@
-import React from 'react';
+import React, { ButtonHTMLAttributes } from 'react';
 
-interface ButtonProps {
-  onClick?: React.MouseEventHandler<HTMLButtonElement>;
-  className?: string;
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children?: React.ReactNode;
 }
 

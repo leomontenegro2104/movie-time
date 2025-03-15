@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/tmovie.png';
 import Input from '../components/atoms/Input/Input';
 import Button from '../components/atoms/Button/Button';
@@ -7,9 +7,12 @@ import Button from '../components/atoms/Button/Button';
 const LogIn: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    sessionStorage.setItem('token', 'fake-token');
+    navigate('/');
   };
 
   return (
@@ -37,7 +40,7 @@ const LogIn: React.FC = () => {
             className="w-full"
           />
         </div>
-        <Button className="w-full">
+        <Button type="submit" className="w-full">
           Log In
         </Button>
       </form>
