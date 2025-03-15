@@ -45,7 +45,7 @@ export const ModalContent: React.FC<ModalContentProps> = ({ onClose, children })
   return (
     <div
       ref={contentRef}
-      className="relative bg-white dark:bg-gray-900 text-black dark:text-white p-6 rounded-lg shadow-lg max-w-lg w-full"
+      className="w-[40rem] h-[30rem] relative bg-white dark:bg-gray-900 text-black dark:text-white p-6 rounded-lg shadow-lg max-w-lg w-full"
     >
       {children}
       <button
