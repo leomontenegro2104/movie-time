@@ -4,7 +4,11 @@ Este é um projeto desenvolvido para explorar a API do **TMDB (The Movie Databas
 
 ## 📸 Preview
 
-[🎥 Veja a demonstração do projeto](./public/movie-time-preview.mp4)
+Confira a demonstração do projeto no vídeo abaixo:
+
+[![Demo Movie Time](https://img.youtube.com/vi/hbongZNiqMA/maxresdefault.jpg)](https://youtu.be/hbongZNiqMA)
+
+🔗 [Assista no YouTube](https://youtu.be/hbongZNiqMA)
 
 ---
 
