@@ -1,48 +1,27 @@
-import React, { useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useRef, useEffect } from 'react';
 import { useTmdb } from '../../../hooks/useTmdb';
-import { Category } from '../../../context/TmdbContext';
 
-interface VideoItem {
-  key: string;
-  name?: string;
-}
-
-interface VideoListProps {
-  id: number;
-}
-
-interface Params {
-  category: Category;
-  [key: string]: string | undefined;
-}
-
-const VideoList: React.FC<VideoListProps> = ({ id }) => {
-  const { category } = useParams<Params>();
-  const { videos, getVideos } = useTmdb();
-
-  useEffect(() => {
-    if (category && id) {
-      getVideos(category, id);
-    }
-  }, [category, id, getVideos]);
-
-  const videoItems: VideoItem[] = videos.slice(0, 5);
+const VideoList: React.FC = () => {
+  const { movieVideos } = useTmdb();
 
   return (
-    <>
-      {videoItems.map((item, i) => (
-        <Video key={i} item={item} />
-      ))}
-    </>
+    <div className="grid gap-6">
+      {movieVideos &&
+        movieVideos.map((video) => (
+          <Video key={video.id} video={video} />
+        ))}
+    </div>
   );
 };
 
 interface VideoProps {
-  item: VideoItem;
+  video: {
+    key: string;
+    name: string;
+  };
 }
 
-const Video: React.FC<VideoProps> = ({ item }) => {
+const Video: React.FC<VideoProps> = ({ video }) => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   useEffect(() => {
@@ -53,16 +32,14 @@ const Video: React.FC<VideoProps> = ({ item }) => {
   }, []);
 
   return (
-    <div className="mb-12">
-      <div className="mb-6">
-        <h2 className="text-[1.8rem]">{item.name ? item.name : 'Trailer'}</h2>
-      </div>
+    <div className="mb-6">
+      <h2 className="text-xl font-semibold mb-2">{video.name}</h2>
       <iframe
-        src={`https://www.youtube.com/embed/${item.key}`}
         ref={iframeRef}
+        src={`https://www.youtube.com/embed/${video.key}`}
         width="100%"
-        title="video"
-        className="border-0"
+        title={video.name}
+        className="border-0 rounded-lg shadow-lg"
       ></iframe>
     </div>
   );

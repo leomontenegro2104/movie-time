@@ -28,12 +28,49 @@ export interface ApiResponse<T> {
   total_pages: number;
 }
 
+export interface Genre {
+  id: number;
+  name: string;
+}
+
+export interface ProductionCompany {
+  id: number;
+  name: string;
+  logo_path?: string;
+  origin_country: string;
+}
+
 export interface Movie {
   id: number;
   title: string;
+  original_title: string;
   overview: string;
   backdrop_path: string;
   poster_path: string;
+  genres: Genre[];
+  release_date: string;
+  runtime: number;
+  status: string;
+  tagline: string;
+  vote_average: number;
+  vote_count: number;
+  production_companies: ProductionCompany[];
+  homepage: string;
+}
+
+export interface Cast {
+  id: number;
+  name: string;
+  profile_path?: string;
+  character: string;
+}
+
+export interface Video {
+  id: string;
+  key: string;
+  name: string;
+  site: string;
+  type: string;
 }
 
 export interface MovieTypeGroup {
@@ -56,6 +93,12 @@ export interface MovieList {
 export interface TmdbContextType {
   movieList: MovieList;
   refreshMovieList: () => Promise<void>;
+  loadMore: (category: Category) => Promise<void>;
+  movieDetail: Movie | null;
+  movieCasts: Cast[] | null;
+  movieVideos: Video[] | null;
+  setMovieId: React.Dispatch<React.SetStateAction<string>>;
+  setCategory: React.Dispatch<React.SetStateAction<Category | null>>
 }
 
 export const TmdbContext = createContext<TmdbContextType>({} as TmdbContextType);
@@ -66,24 +109,27 @@ export const TmdbProvider: React.FC<{ children: React.ReactNode }> = ({ children
     tv: { popular: [], top_rated: [], on_the_air: [] },
   });
 
+  const [page, setPage] = useState<number>(1);
+  const [category, setCategory] = useState<Category | null>(null);
+  const [movieId, setMovieId] = useState<string>('');
+  const [movieDetail, setMovieDetail] = useState<Movie | null>(null);
+  const [movieCasts, setMoviesCast] = useState<Cast[] | null>(null);
+  const [movieVideos, setMovieVideos] = useState<Video[] | null>(null);
+
   async function refreshMovieList() {
     try {
       const movieTypes: MovieType[] = [MovieType.UPCOMING, MovieType.POPULAR, MovieType.TOP_RATED];
       const tvTypes: TVType[] = [TVType.POPULAR, TVType.TOP_RATED, TVType.ON_THE_AIR];
 
       const moviePromises = movieTypes.map((type) =>
-        axiosClient.get<ApiResponse<Movie>>(`movie/${type}`, { params: { page: 1 } })
+        axiosClient.get<ApiResponse<Movie>>(`movie/${type}`, { params: { page } })
       );
       const tvPromises = tvTypes.map((type) =>
-        axiosClient.get<ApiResponse<Movie>>(`tv/${type}`, { params: { page: 1 } })
+        axiosClient.get<ApiResponse<Movie>>(`tv/${type}`, { params: { page } })
       );
-
-      console.log('moviePromises:', moviePromises);
 
       const movieResults = await Promise.all(moviePromises);
       const tvResults = await Promise.all(tvPromises);
-
-      console.log('movieResults:', movieResults);
 
       const newMovieList: MovieList = {
         movie: {
@@ -97,7 +143,6 @@ export const TmdbProvider: React.FC<{ children: React.ReactNode }> = ({ children
           on_the_air: tvResults[2].results,
         },
       };
-      console.log('newMovieList:', newMovieList);
 
       setMovieList(newMovieList);
     } catch (error) {
@@ -105,12 +150,109 @@ export const TmdbProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }
 
+  async function loadMore(category: Category) {
+    try {
+      const nextPage = page + 1;
+      setPage(nextPage);
+
+      if (category === Category.MOVIE) {
+        const movieTypes: MovieType[] = [MovieType.UPCOMING, MovieType.POPULAR, MovieType.TOP_RATED];
+
+        const moviePromises = movieTypes.map((type) =>
+          axiosClient.get<ApiResponse<Movie>>(`movie/${type}`, { params: { page: nextPage } })
+        );
+
+        const movieResults = await Promise.all(moviePromises);
+
+        setMovieList((prev) => ({
+          ...prev,
+          movie: {
+            upcoming: [...prev.movie.upcoming, ...movieResults[0].data.results],
+            popular: [...prev.movie.popular, ...movieResults[1].data.results],
+            top_rated: [...prev.movie.top_rated, ...movieResults[2].data.results],
+          },
+        }));
+      } else {
+        const tvTypes: TVType[] = [TVType.POPULAR, TVType.TOP_RATED, TVType.ON_THE_AIR];
+
+        const tvPromises = tvTypes.map((type) =>
+          axiosClient.get<ApiResponse<Movie>>(`tv/${type}`, { params: { page: nextPage } })
+        );
+
+        const tvResults = await Promise.all(tvPromises);
+
+        setMovieList((prev) => ({
+          ...prev,
+          tv: {
+            popular: [...prev.tv.popular, ...tvResults[0].data.results],
+            top_rated: [...prev.tv.top_rated, ...tvResults[1].data.results],
+            on_the_air: [...prev.tv.on_the_air, ...tvResults[2].data.results],
+          },
+        }));
+      }
+    } catch (error) {
+      console.error('Error loading more movies:', error);
+    }
+  }
+
+  async function getMovieDetail(category: Category, id: string) {
+    try {
+      const response = await axiosClient.get<Movie>(`${category}/${id}`);
+
+      setMovieDetail(response);
+    } catch (error) {
+      console.error('Error fetching movie details:', error);
+      setMovieDetail(null);
+    }
+  }
+
+  async function getCastList(category: Category, id: string) {
+    try {
+      const response = await axiosClient.get<{ cast: Cast[] }>(`${category}/${id}/credits`);
+      console.log(response);
+      setMoviesCast(response.cast.slice(0, 5));
+
+    } catch (error) {
+      console.error('Error fetching cast:', error);
+      setMoviesCast([]);
+    }
+  }
+
+  async function getVideos(category: Category, id: string) {
+    try {
+      const response = await axiosClient.get<{ results: Video[] }>(`${category}/${id}/videos`);
+      setMovieVideos(response.results.slice(0, 5));
+    } catch (error) {
+      console.error('Error fetching videos:', error);
+      setMovieVideos([]);
+    }
+  }
+
   useEffect(() => {
     refreshMovieList();
   }, []);
 
+  useEffect(() => {
+    if (category && movieId) {
+      getMovieDetail(category, movieId);
+      getCastList(category, movieId);
+      getVideos(category, movieId);
+    }
+  }, [category, movieId]);
+
   return (
-    <TmdbContext.Provider value={{ movieList, refreshMovieList }}>
+    <TmdbContext.Provider value={
+      {
+        movieList,
+        refreshMovieList,
+        loadMore,
+        movieDetail,
+        movieCasts,
+        movieVideos,
+        setMovieId,
+        setCategory
+      }
+    }>
       {children}
     </TmdbContext.Provider>
   );

@@ -1,45 +1,27 @@
-import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React from 'react';
 import { useTmdb } from '../../../hooks/useTmdb';
-import apiConfig from '../../../api/apiConfig';
-import { Category } from '../../../api/tmdbApi';
 
-interface Cast {
-  profile_path?: string;
-  name: string;
-  job?: string;
-}
-
-interface CastListProps {
-  id: number;
-}
-
-const CastList: React.FC<CastListProps> = ({ id }) => {
-  const { category } = useParams<{ category?: Category }>();
-  const { credits, getCredits } = useTmdb();
-
-  useEffect(() => {
-    if (category && id) {
-      getCredits(category, id);
-    }
-  }, [category, id, getCredits]);
-
-  const filteredCredits = (credits as Cast[])?.filter((c) => c.profile_path) || [];
+const CastList: React.FC = () => {
+  const { movieCasts } = useTmdb();
 
   return (
-    <div className="grid grid-cols-auto-fill-90 gap-2">
-      {filteredCredits.slice(0, 5).map((cast, i) => (
-        <div key={i} className="flex flex-col items-center">
-          <div
-            className="w-full h-[160px] bg-cover bg-no-repeat rounded-lg"
-            style={{ backgroundImage: `url(${apiConfig.w500Image(cast.profile_path || '')})` }}
-          ></div>
-          <p className="text-xs text-center mt-1">{cast.name}</p>
-        </div>
-      ))}
-      {filteredCredits.length === 0 && (
-        <p className="text-white text-center col-span-full">No cast available.</p>
-      )}
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-4">
+      {movieCasts &&
+        movieCasts.map((actor) => (
+          <div key={actor.id} className="flex flex-col items-center text-center">
+            <img
+              className="w-24 h-24 rounded-full object-cover border-2 border-gray-700"
+              src={
+                actor.profile_path
+                  ? `https://image.tmdb.org/t/p/w500/${actor.profile_path}`
+                  : 'https://via.placeholder.com/100x100?text=No+Image'
+              }
+              alt={actor.name}
+            />
+            <p className="text-sm mt-2 font-semibold">{actor.name}</p>
+            <p className="text-xs text-gray-400">{actor.character}</p>
+          </div>
+        ))}
     </div>
   );
 };

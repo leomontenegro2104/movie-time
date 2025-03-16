@@ -8,11 +8,11 @@ interface PageHeaderProps {
 const PageHeader: React.FC<PageHeaderProps> = ({ children }) => {
   return (
     <div
-      className="relative text-center mb-8 pt-[8rem] pb-[2rem] bg-top bg-cover bg-no-repeat"
+      className="relative text-center mb-8 pt-[var(--header-height)] pb-8 bg-top bg-cover bg-no-repeat"
       style={{ backgroundImage: `url(${bg})` }}
     >
-      <h2 className="relative z-[99]">{children}</h2>
-      <div className="absolute bottom-0 left-0 w-full h-[100px] bg-gradient-to-t from-[#0f0f0f] to-transparent"></div>
+      <h2 className="relative z-10 text-white text-2xl font-bold">{children}</h2>
+      <div className="absolute bottom-0 left-0 w-full h-[100px] bg-gradient-to-t from-[var(--body-bg)] to-transparent"></div>
     </div>
   );
 };
