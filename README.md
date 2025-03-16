@@ -1,4 +1,4 @@
-# 🎬 TMDB Movie App
+# 🎬 TMDB Movie App - Movie Time
 
 Este é um projeto desenvolvido para explorar a API do **TMDB (The Movie Database)**, oferecendo uma experiência completa de navegação por filmes e séries, incluindo detalhes, trailers e elencos. O projeto utiliza **React**, **TypeScript**, **Tailwind CSS** e **React Router**, com integração a um contexto global via **Context API**.
 
