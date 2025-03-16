@@ -1,11 +1,9 @@
-/* Import Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Define custom CSS variables */
 :root {
   --body-bg: #0f0f0f;
   --main-color: #ff0000;
@@ -21,7 +19,6 @@
   --font-family: 'Montserrat', sans-serif;
 }
 
-/* Global reset */
 * {
   margin: 0;
   padding: 0;
@@ -29,7 +26,6 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Set html font-size with media queries */
 html {
   font-size: 100%;
 }
@@ -46,7 +42,6 @@ html {
   }
 }
 
-/* Global body styles */
 body {
   font-family: var(--font-family);
   font-weight: 400;
@@ -55,7 +50,6 @@ body {
   color: var(--txt-color);
 }
 
-/* Anchor styles */
 a {
   text-decoration: none;
   color: inherit;
@@ -67,18 +61,15 @@ a {
   }
 }
 
-/* Remove outlines for buttons and inputs */
 button,
 input {
   outline: none;
 }
 
-/* Remove list styles */
 ul {
   list-style: none;
 }
 
-/* Responsive images and iframes */
 img {
   max-width: 100%;
 }
@@ -87,12 +78,10 @@ iframe {
   border: 0;
 }
 
-/* Custom container using Tailwind utilities */
 .container {
   @apply max-w-[1660px] mx-auto;
 }
 
-/* Spacing utilities */
 .mb-3 {
   @apply mb-12;
 }
