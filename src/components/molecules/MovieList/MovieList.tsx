@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTmdb } from '../../../hooks/useTmdb';
 import MovieCard from '../MovieCard/MovieCard';
-import { Category, MovieType, TVType } from '../../../api/tmdbApi';
+import { Category, MovieType, TVType } from '../../../context/TmdbContext';
 import { Movie } from '../../../context/TmdbContext';
 
 interface MovieListProps {

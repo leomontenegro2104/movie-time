@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logo from '../../../assets/tmovie.png';
 import { useTmdb } from '../../../hooks/useTmdb';
-import { Category, MovieType, TVType } from '../../../api/tmdbApi';
+import { Category, MovieType, TVType } from '../../../context/TmdbContext';
 
 interface NavItem {
   display: string;

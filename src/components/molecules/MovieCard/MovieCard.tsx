@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import apiConfig from '../../../api/apiConfig';
 import Button from '../../atoms/Button/Button';
-import { Category } from '../../../api/tmdbApi';
+import { Category } from '../../../context/TmdbContext';
 
 interface IMovie {
   id: number;

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import apiConfig from '../../../api/apiConfig';
 import Button, { OutlineButton } from '../../atoms/Button/Button';
 import { useTmdb } from '../../../hooks/useTmdb';
-import { Category, MovieType } from '../../../api/tmdbApi';
+import { Category, MovieType } from '../../../context/TmdbContext';
 
 interface IMovie {
   id: number;

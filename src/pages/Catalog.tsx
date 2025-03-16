@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import PageHeader from '../components/molecules/PageHeader/PageHeader';
 import MovieSection from '../components/molecules/MovieSection/MovieSection';
 import MovieList from '../components/molecules/MovieList/MovieList';
-import { Category, MovieType, TVType } from '../api/tmdbApi';
+import { Category, MovieType, TVType } from '../context/TmdbContext';
 
 interface CatalogParams {
   category: string;
