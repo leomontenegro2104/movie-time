@@ -11,7 +11,10 @@ interface MovieListProps {
 
 const MovieList: React.FC<MovieListProps> = ({ category, type }) => {
   const { movieList } = useTmdb();
-  const items: Movie[] = movieList[category]?.[type] ?? [];
+  const items: Movie[] =
+    category === Category.MOVIE
+      ? (movieList[Category.MOVIE]?.[type as MovieType] ?? [])
+      : (movieList[Category.TV]?.[type as TVType] ?? []);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [scrollPosition, setScrollPosition] = useState(0);

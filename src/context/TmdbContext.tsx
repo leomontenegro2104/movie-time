@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from 'react';
 import { createContext } from 'use-context-selector';
 import axiosClient from '../api/axiosClient';
@@ -130,17 +131,19 @@ export const TmdbProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       const movieResults = await Promise.all(moviePromises);
       const tvResults = await Promise.all(tvPromises);
+      console.log('tvResults', tvResults);
+
 
       const newMovieList: MovieList = {
         movie: {
-          upcoming: movieResults[0].results,
-          popular: movieResults[1].results,
-          top_rated: movieResults[2].results,
+          upcoming: (movieResults[0] as any).results,
+          popular: (movieResults[1] as any).results,
+          top_rated: (movieResults[2] as any).results,
         },
         tv: {
-          popular: tvResults[0].results,
-          top_rated: tvResults[1].results,
-          on_the_air: tvResults[2].results,
+          popular: (tvResults[0] as any).results,
+          top_rated: (tvResults[1] as any).results,
+          on_the_air: (tvResults[2] as any).results,
         },
       };
 
@@ -199,7 +202,7 @@ export const TmdbProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const response = await axiosClient.get<Movie>(`${category}/${id}`);
 
-      setMovieDetail(response);
+      setMovieDetail(response as any);
     } catch (error) {
       console.error('Error fetching movie details:', error);
       setMovieDetail(null);
@@ -209,8 +212,7 @@ export const TmdbProvider: React.FC<{ children: React.ReactNode }> = ({ children
   async function getCastList(category: Category, id: string) {
     try {
       const response = await axiosClient.get<{ cast: Cast[] }>(`${category}/${id}/credits`);
-      console.log(response);
-      setMoviesCast(response.cast.slice(0, 5));
+      setMoviesCast((response as any).cast.slice(0, 5));
 
     } catch (error) {
       console.error('Error fetching cast:', error);
@@ -221,7 +223,7 @@ export const TmdbProvider: React.FC<{ children: React.ReactNode }> = ({ children
   async function getVideos(category: Category, id: string) {
     try {
       const response = await axiosClient.get<{ results: Video[] }>(`${category}/${id}/videos`);
-      setMovieVideos(response.results.slice(0, 5));
+      setMovieVideos((response as any).results.slice(0, 5));
     } catch (error) {
       console.error('Error fetching videos:', error);
       setMovieVideos([]);

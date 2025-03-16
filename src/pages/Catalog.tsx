@@ -5,13 +5,10 @@ import MovieSection from '../components/molecules/MovieSection/MovieSection';
 import MovieList from '../components/molecules/MovieList/MovieList';
 import { Category, MovieType, TVType } from '../context/TmdbContext';
 
-interface CatalogParams {
-  category: string;
-}
 const VALID_CATEGORIES: Category[] = [Category.MOVIE, Category.TV];
 
 const Catalog: React.FC = () => {
-  const { category } = useParams<CatalogParams>();
+  const { category } = useParams<{ category?: string }>();
 
   if (!category || !VALID_CATEGORIES.includes(category as Category)) {
     return <Navigate to="/404" replace />;
