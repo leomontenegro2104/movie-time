@@ -92,7 +92,7 @@ const HeroSlideItem: React.FC<HeroSlideItemProps> = ({ item, className }) => {
             <OutlineButton onClick={handleNavigation}>Watch trailer</OutlineButton>
           </div>
         </div>
-        <div className="flex flex-1 items-center justify-start relative">
+        <div className="flex flex-1 items-center justify-start relative hidden md:block">
           <img
             src={apiConfig.w500Image(item.poster_path || '')}
             alt={item.title}

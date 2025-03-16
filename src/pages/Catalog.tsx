@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import PageHeader from '../components/molecules/PageHeader/PageHeader';
 import MovieSection from '../components/molecules/MovieSection/MovieSection';
 import MovieList from '../components/molecules/MovieList/MovieList';
@@ -8,9 +8,15 @@ import { Category, MovieType, TVType } from '../context/TmdbContext';
 interface CatalogParams {
   category: string;
 }
+const VALID_CATEGORIES: Category[] = [Category.MOVIE, Category.TV];
 
 const Catalog: React.FC = () => {
   const { category } = useParams<CatalogParams>();
+
+  if (!category || !VALID_CATEGORIES.includes(category as Category)) {
+    return <Navigate to="/404" replace />;
+
+  }
 
   const categoryTypes = category === Category.MOVIE ? MovieType : TVType;
 

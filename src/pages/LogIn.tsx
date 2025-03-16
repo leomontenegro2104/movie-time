@@ -5,7 +5,7 @@ import Input from '../components/atoms/Input/Input';
 import Button from '../components/atoms/Button/Button';
 
 const LogIn: React.FC = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
@@ -24,10 +24,10 @@ const LogIn: React.FC = () => {
       <form onSubmit={handleSubmit} className="w-full max-w-sm bg-gray-800 p-8 rounded-lg shadow-lg">
         <div className="mb-4">
           <Input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="w-full"
           />
         </div>

@@ -1,8 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import logo from '../../../assets/tmovie.png';
-import { useTmdb } from '../../../hooks/useTmdb';
 import { Category, MovieType, TVType } from '../../../context/TmdbContext';
+import logo from '../../../assets/tmovie.png';
 
 interface NavItem {
   display: string;
@@ -20,7 +19,6 @@ const headerNav: NavItem[] = [
 const Header: React.FC = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { getMoviesList, getTvList } = useTmdb();
   const headerRef = useRef<HTMLDivElement | null>(null);
 
   const active = headerNav.findIndex((e) => e.path === pathname);
@@ -42,17 +40,6 @@ const Header: React.FC = () => {
     navigate('/login');
   };
 
-  const handleNavigation = (category?: Category, type?: MovieType | TVType) => {
-    if (category && type) {
-      if (category === Category.MOVIE) {
-        getMoviesList(type as MovieType, { page: 1 });
-      } else {
-        getTvList(type as TVType, { page: 1 });
-      }
-    }
-  };
-
-
   const token = sessionStorage.getItem('token');
 
   return (
@@ -67,7 +54,6 @@ const Header: React.FC = () => {
             <li key={i} className="relative">
               <Link
                 to={e.path}
-                onClick={() => handleNavigation(e.category, e.type)}
                 className={`text-white pb-1 relative ${i === active ? 'after:w-full' : 'after:w-0'} after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:h-[2px] after:bg-red-500 after:transition-all after:duration-500 hover:after:w-full`}
               >
                 {e.display}

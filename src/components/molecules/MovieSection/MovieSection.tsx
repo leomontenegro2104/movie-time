@@ -16,7 +16,7 @@ const MovieSection: React.FC<MovieSectionProps> = ({ title, viewMoreLink, childr
         <OutlineButton className="small">View more</OutlineButton>
       </Link>
     </div>
-    {children}
+    <div className="relative">{children}</div>
   </section>
 );
 
