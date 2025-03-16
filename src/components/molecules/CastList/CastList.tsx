@@ -1,47 +1,27 @@
-import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React from 'react';
 import { useTmdb } from '../../../hooks/useTmdb';
-import apiConfig from '../../../api/apiConfig';
-import './cast-list.scss';
-import { Category } from '../../../context/TmdbContext';
 
-interface Cast {
-  profile_path?: string;
-  name: string;
-}
-
-interface CastListProps {
-  id: number;
-}
-
-interface Params {
-  category: Category;
-  [key: string]: string | undefined;
-}
-
-const CastList: React.FC<CastListProps> = ({ id }) => {
-  const { category } = useParams<Params>();
-  const { credits, getCredits } = useTmdb();
-
-  useEffect(() => {
-    if (category && id) {
-      getCredits(category, id);
-    }
-  }, [category, id, getCredits]);
-
-  const castList: Cast[] = (credits as Cast[])?.slice(0, 5) || [];
+const CastList: React.FC = () => {
+  const { movieCasts } = useTmdb();
 
   return (
-    <div className="casts">
-      {castList.map((item, i) => (
-        <div key={i} className="casts__item">
-          <div
-            className="casts__item__img"
-            style={{ backgroundImage: `url(${apiConfig.w500Image(item.profile_path || '')})` }}
-          ></div>
-          <p className="casts__item__name">{item.name}</p>
-        </div>
-      ))}
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-4">
+      {movieCasts &&
+        movieCasts.map((actor) => (
+          <div key={actor.id} className="flex flex-col items-center text-center">
+            <img
+              className="w-24 h-24 rounded-full object-cover border-2 border-gray-700"
+              src={
+                actor.profile_path
+                  ? `https://image.tmdb.org/t/p/w500/${actor.profile_path}`
+                  : 'https://via.placeholder.com/100x100?text=No+Image'
+              }
+              alt={actor.name}
+            />
+            <p className="text-sm mt-2 font-semibold">{actor.name}</p>
+            <p className="text-xs text-gray-400">{actor.character}</p>
+          </div>
+        ))}
     </div>
   );
 };

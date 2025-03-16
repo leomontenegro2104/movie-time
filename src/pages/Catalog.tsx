@@ -1,26 +1,42 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
-import { Category } from '../context/TmdbContext';
+import { Navigate, useParams } from 'react-router-dom';
 import PageHeader from '../components/molecules/PageHeader/PageHeader';
-import MovieGrid from '../components/molecules/MovieGrid/MovieGrid';
+import MovieSection from '../components/molecules/MovieSection/MovieSection';
+import MovieList from '../components/molecules/MovieList/MovieList';
+import { Category, MovieType, TVType } from '../context/TmdbContext';
 
 interface CatalogParams {
   category: string;
-  [key: string]: string | undefined;
 }
+const VALID_CATEGORIES: Category[] = [Category.MOVIE, Category.TV];
 
 const Catalog: React.FC = () => {
   const { category } = useParams<CatalogParams>();
+
+  if (!category || !VALID_CATEGORIES.includes(category as Category)) {
+    return <Navigate to="/404" replace />;
+
+  }
+
+  const categoryTypes = category === Category.MOVIE ? MovieType : TVType;
+
+  const parseTypeName = (category: string): string => {
+    return category
+      .replace(/_/g, ' ')
+      .replace(/\b\w/g, (char) => char.toUpperCase());
+  };
 
   return (
     <>
       <PageHeader>
         {category === Category.MOVIE ? 'Movies' : 'TV Series'}
       </PageHeader>
-      <div className="container">
-        <div className="section mb-3">
-          <MovieGrid category={category as Category} />
-        </div>
+      <div className="container mx-auto px-8">
+        {Object.entries(categoryTypes).map(([key, type]) => (
+          <MovieSection key={key} title={parseTypeName(type)} viewMoreLink={`/${category}`}>
+            <MovieList category={category as Category} type={type as MovieType | TVType} />
+          </MovieSection>
+        ))}
       </div>
     </>
   );
