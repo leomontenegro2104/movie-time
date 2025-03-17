@@ -49,19 +49,20 @@ const Detail: React.FC = () => {
             ))}
           </div>
 
-          <p className="mt-2 text-gray-400">Duração: {movieDetail.runtime} min</p>
-          <p className="mt-1 text-gray-400">Lançamento: {movieDetail.release_date}</p>
-          <p className="mt-1 text-gray-400">Avaliação: ⭐ {movieDetail.vote_average} / 10</p>
+          <p className="mt-2 text-gray-400">Duration: {movieDetail.runtime} min</p>
+          <p className="mt-1 text-gray-400">Release Date: {movieDetail.release_date}</p>
+          <p className="mt-1 text-gray-400">Rating: ⭐ {movieDetail.vote_average} / 10</p>
+
 
           <div className="mt-6">
-            <h2 className="text-2xl font-semibold mb-3">Elenco</h2>
+            <h2 className="text-2xl font-semibold mb-3">Cast</h2>
             <CastList />
           </div>
         </div>
       </div>
 
       <div className="container mx-auto px-4 mt-8">
-        <h2 className="text-2xl font-semibold mb-4">Vídeos</h2>
+        <h2 className="text-2xl font-semibold mb-4">Videos</h2>
         <VideoList />
       </div>
     </div>
